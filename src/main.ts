@@ -23,12 +23,11 @@ function handleMultipleCommits(
 
 function formatCommitInfo({
   sha,
-  url,
   message,
   committer,
   author,
 }: CommitInfo): string {
-  return `Commit sha: [${sha}](${url}), Author: ${author}, Committer: ${committer}; ${message}`;
+  return `Commit sha: ${sha}, Author: ${author}, Committer: ${committer}; ${message}`;
 }
 
 async function main(): Promise<void> {
@@ -61,7 +60,10 @@ async function main(): Promise<void> {
   if (!dcoFailed.length) {
     process.exit(0);
   } else {
-    const summaryLines = dcoFailed.map(formatCommitInfo);
+    const summaryLines = [
+      'Unsigned commits:',
+      ...dcoFailed.map(formatCommitInfo),
+    ];
     let summary = summaryLines.join('\n');
     if (dcoFailed.length === 1) {
       summary = handleOneCommit(pull_request.head.ref) + `\n\n${summary}`;

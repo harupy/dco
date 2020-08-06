@@ -2450,8 +2450,8 @@ function handleMultipleCommits(ref, commitLength, numFailed) {
     const push = utils_1.createCodeBlock(`git push --force-with-lease origin ${ref}`);
     return `You have ${numFailed} commits incorrectly signed off. To fix, first ensure you have a local copy of your branch by checking out the pull request locally via command line. Next, head to your local branch and run: \n${rebase}\nNow your commits will have your sign off. Next run:\n${push}`;
 }
-function formatCommitInfo({ sha, url, message, committer, author, }) {
-    return `Commit sha: [${sha}](${url}), Author: ${author}, Committer: ${committer}; ${message}`;
+function formatCommitInfo({ sha, message, committer, author, }) {
+    return `Commit sha: ${sha}, Author: ${author}, Committer: ${committer}; ${message}`;
 }
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -2478,7 +2478,10 @@ function main() {
             process.exit(0);
         }
         else {
-            const summaryLines = dcoFailed.map(formatCommitInfo);
+            const summaryLines = [
+                'Unsigned commits:',
+                ...dcoFailed.map(formatCommitInfo),
+            ];
             let summary = summaryLines.join('\n');
             if (dcoFailed.length === 1) {
                 summary = handleOneCommit(pull_request.head.ref) + `\n\n${summary}`;
