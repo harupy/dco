@@ -18,7 +18,7 @@ function handleMultipleCommits(
 ) {
   const rebase = createCodeBlock(`git rebase HEAD~${commitLength} --signoff`);
   const push = createCodeBlock(`git push --force-with-lease origin ${ref}`);
-  return `You have ${numFailed} commits incorrectly signed off. To fix, first ensure you have a local copy of your branch by checking out the pull request locally via command line. Next, head to your local branch and run: \n${rebase}\nNow your commits will have your sign off. Next run \n${push}`;
+  return `You have ${numFailed} commits incorrectly signed off. To fix, first ensure you have a local copy of your branch by checking out the pull request locally via command line. Next, head to your local branch and run: \n${rebase}\nNow your commits will have your sign off. Next run:\n${push}`;
 }
 
 function formatCommitInfo({
@@ -36,9 +36,14 @@ async function main(): Promise<void> {
   const octokit = github.getOctokit(token);
 
   const { pull_request } = github.context.payload;
-  console.log(pull_request);
 
   if (pull_request === undefined) {
+    return;
+  }
+
+  const { html_url } = pull_request;
+
+  if (html_url === undefined) {
     return;
   }
 
@@ -51,7 +56,6 @@ async function main(): Promise<void> {
   });
 
   const { commits } = compare.data;
-  const { html_url } = github.context.payload;
   const dcoFailed = await getDCOStatus(commits, async () => true, html_url);
 
   if (!dcoFailed.length) {

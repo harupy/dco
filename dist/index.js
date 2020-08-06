@@ -2448,7 +2448,7 @@ function handleOneCommit(ref) {
 function handleMultipleCommits(ref, commitLength, numFailed) {
     const rebase = utils_1.createCodeBlock(`git rebase HEAD~${commitLength} --signoff`);
     const push = utils_1.createCodeBlock(`git push --force-with-lease origin ${ref}`);
-    return `You have ${numFailed} commits incorrectly signed off. To fix, first ensure you have a local copy of your branch by checking out the pull request locally via command line. Next, head to your local branch and run: \n${rebase}\nNow your commits will have your sign off. Next run \n${push}`;
+    return `You have ${numFailed} commits incorrectly signed off. To fix, first ensure you have a local copy of your branch by checking out the pull request locally via command line. Next, head to your local branch and run: \n${rebase}\nNow your commits will have your sign off. Next run:\n${push}`;
 }
 function formatCommitInfo({ sha, url, message, committer, author, }) {
     return `Commit sha: [${sha}](${url}), Author: ${author}, Committer: ${committer}; ${message}`;
@@ -2458,8 +2458,11 @@ function main() {
         const token = core.getInput('github-token', { required: true });
         const octokit = github.getOctokit(token);
         const { pull_request } = github.context.payload;
-        console.log(pull_request);
         if (pull_request === undefined) {
+            return;
+        }
+        const { html_url } = pull_request;
+        if (html_url === undefined) {
             return;
         }
         const { repo, owner } = github.context.repo;
@@ -2470,7 +2473,6 @@ function main() {
             head: pull_request.head.sha,
         });
         const { commits } = compare.data;
-        const { html_url } = github.context.payload;
         const dcoFailed = yield getDCOStatus_1.getDCOStatus(commits, () => __awaiter(this, void 0, void 0, function* () { return true; }), html_url);
         if (!dcoFailed.length) {
             process.exit(0);
