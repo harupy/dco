@@ -2441,23 +2441,27 @@ const github = __importStar(__webpack_require__(469));
 const getDCOStatus_1 = __webpack_require__(528);
 const utils_1 = __webpack_require__(611);
 function handleOneCommit(ref) {
-    const amend = utils_1.createCodeBlock('git commit --amend --signoff', 'bash');
-    const push = utils_1.createCodeBlock(`git push --force-with-lease origin ${ref}`, 'bash');
-    return `You only have one commit incorrectly signed off! To fix, first ensure you have a local copy of your branch by [checking out the pull request locally via command line](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/checking-out-pull-requests-locally). Next, head to your local branch and run: \n${amend}\nNow your commits will have your sign off. Next run \n${push}`;
+    const amend = utils_1.createCodeBlock('git commit --amend --signoff');
+    const push = utils_1.createCodeBlock(`git push --force-with-lease origin ${ref}`);
+    return `You only have one commit incorrectly signed off! To fix, first ensure you have a local copy of your branch by checking out the pull request locally via command line. Next, head to your local branch and run: \n${amend}\nNow your commits will have your sign off. Next run \n${push}`;
 }
 function handleMultipleCommits(ref, commitLength, numFailed) {
-    const rebase = utils_1.createCodeBlock(`git rebase HEAD~${commitLength} --signoff`, 'bash');
-    const push = utils_1.createCodeBlock(`git push --force-with-lease origin ${ref}`, 'bash');
-    return `You have ${numFailed} commits incorrectly signed off. To fix, first ensure you have a local copy of your branch by [checking out the pull request locally via command line](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/checking-out-pull-requests-locally). Next, head to your local branch and run: \n${rebase}\n Now your commits will have your sign off. Next run \n${push}`;
+    const rebase = utils_1.createCodeBlock(`git rebase HEAD~${commitLength} --signoff`);
+    const push = utils_1.createCodeBlock(`git push --force-with-lease origin ${ref}`);
+    return `You have ${numFailed} commits incorrectly signed off. To fix, first ensure you have a local copy of your branch by checking out the pull request locally via command line. Next, head to your local branch and run: \n${rebase}\n Now your commits will have your sign off. Next run \n${push}`;
+}
+function formatCommitInfo({ sha, url, message, committer, author, }) {
+    return `Commit sha: [${sha}](${url}), Author: ${author}, Committer: ${committer}; ${message}`;
 }
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const token = core.getInput('github-token', { required: true });
+        const octokit = github.getOctokit(token);
         const { pull_request } = github.context.payload;
+        console.log(pull_request);
         if (pull_request === undefined) {
             return;
         }
-        const octokit = github.getOctokit(token);
         const { repo, owner } = github.context.repo;
         const compare = yield octokit.repos.compareCommits({
             owner,
@@ -2472,11 +2476,7 @@ function main() {
             process.exit(0);
         }
         else {
-            const summaryLines = [];
-            dcoFailed.forEach(({ sha, url, message, committer, author }) => {
-                const truncatedSha = sha.substr(0, 7);
-                summaryLines.push(`Commit sha: [${truncatedSha}](${url}), Author: ${author}, Committer: ${committer}; ${message}`);
-            });
+            const summaryLines = dcoFailed.map(formatCommitInfo);
             let summary = summaryLines.join('\n');
             if (dcoFailed.length === 1) {
                 summary = handleOneCommit(pull_request.head.ref) + `\n\n${summary}`;
@@ -6907,8 +6907,8 @@ module.exports = require("http");
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createCodeBlock = void 0;
-function createCodeBlock(code, language = '') {
-    return `\`\`\`${language}\n${code}\n\`\`\``;
+function createCodeBlock(code) {
+    return `\n\n${code}\n\n`;
 }
 exports.createCodeBlock = createCodeBlock;
 
