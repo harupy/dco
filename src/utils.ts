@@ -1,3 +1,3 @@
-export function createCodeBlock(code: string, language = ''): string {
-  return `\`\`\`${language}\n${code}\n\`\`\``;
+export function createCodeBlock(code: string): string {
+  return `\n\n${code}\n\n`;
 }
