@@ -1,7 +1,7 @@
 import { validate } from 'email-validator';
 import { ReposCompareCommitsResponseData } from '@octokit/types';
 
-import { CommitInfo } from './types';
+import { CommitInfo, UserInfo } from './types';
 
 // Returns a list containing failed commit error messages
 // If commits aren't properly signed signed off
@@ -104,9 +104,9 @@ export async function getDCOStatus(
   return failed;
 }
 
-function getSignoffs(commitMessage: string): { name: string; email: string }[] {
+function getSignoffs(commitMessage: string): UserInfo[] {
   const regex = /^Signed-off-by: (.*) <(.*)>$/gim;
-  const matches = [];
+  const matches: UserInfo[] = [];
   let match;
   while ((match = regex.exec(commitMessage)) !== null) {
     matches.push({

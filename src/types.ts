@@ -5,3 +5,5 @@ export type CommitInfo = {
   committer: string;
   message: string;
 };
+
+export type UserInfo = { name: string; email: string };
