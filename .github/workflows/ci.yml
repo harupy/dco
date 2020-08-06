@@ -38,3 +38,12 @@ jobs:
             echo $git_diff
             exit 1
           fi
+
+  labeling:
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
