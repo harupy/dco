@@ -2474,25 +2474,16 @@ function main() {
         });
         const { commits } = compare.data;
         const dcoFailed = yield getDCOStatus_1.getDCOStatus(commits, () => __awaiter(this, void 0, void 0, function* () { return true; }), html_url);
-        if (!dcoFailed.length) {
+        if (dcoFailed.length === 0) {
+            console.log('All commits are signed off!');
             process.exit(0);
         }
-        else {
-            const summaryLines = [
-                'Unsigned commits:',
-                ...dcoFailed.map(formatCommitInfo),
-            ];
-            let summary = summaryLines.join('\n');
-            if (dcoFailed.length === 1) {
-                summary = handleOneCommit(pull_request.head.ref) + `\n${summary}`;
-            }
-            else {
-                summary =
-                    handleMultipleCommits(pull_request.head.ref, commits.length, dcoFailed.length) + `\n${summary}`;
-            }
-            console.log(summary);
-            process.exit(1);
-        }
+        const unsigndCommits = dcoFailed.map(formatCommitInfo);
+        const howToSignoff = dcoFailed.length === 1
+            ? handleOneCommit(pull_request.head.ref)
+            : handleMultipleCommits(pull_request.head.ref, commits.length, dcoFailed.length);
+        console.log(howToSignoff + '\nUnsigned commits:\n' + unsigndCommits.join('\n'));
+        process.exit(1);
     });
 }
 main().catch(error => {

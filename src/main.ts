@@ -57,28 +57,25 @@ async function main(): Promise<void> {
   const { commits } = compare.data;
   const dcoFailed = await getDCOStatus(commits, async () => true, html_url);
 
-  if (!dcoFailed.length) {
+  if (dcoFailed.length === 0) {
+    console.log('All commits are signed off!');
     process.exit(0);
-  } else {
-    const summaryLines = [
-      'Unsigned commits:',
-      ...dcoFailed.map(formatCommitInfo),
-    ];
-    let summary = summaryLines.join('\n');
-    if (dcoFailed.length === 1) {
-      summary = handleOneCommit(pull_request.head.ref) + `\n${summary}`;
-    } else {
-      summary =
-        handleMultipleCommits(
+  }
+
+  const unsigndCommits = dcoFailed.map(formatCommitInfo);
+  const howToSignoff =
+    dcoFailed.length === 1
+      ? handleOneCommit(pull_request.head.ref)
+      : handleMultipleCommits(
           pull_request.head.ref,
           commits.length,
           dcoFailed.length,
-        ) + `\n${summary}`;
-    }
+        );
 
-    console.log(summary);
-    process.exit(1);
-  }
+  console.log(
+    howToSignoff + '\nUnsigned commits:\n' + unsigndCommits.join('\n'),
+  );
+  process.exit(1);
 }
 
 main().catch(error => {
