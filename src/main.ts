@@ -66,14 +66,14 @@ async function main(): Promise<void> {
     ];
     let summary = summaryLines.join('\n');
     if (dcoFailed.length === 1) {
-      summary = handleOneCommit(pull_request.head.ref) + `\n\n${summary}`;
+      summary = handleOneCommit(pull_request.head.ref) + `\n${summary}`;
     } else {
       summary =
         handleMultipleCommits(
           pull_request.head.ref,
           commits.length,
           dcoFailed.length,
-        ) + `\n\n${summary}`;
+        ) + `\n${summary}`;
     }
 
     console.log(summary);
