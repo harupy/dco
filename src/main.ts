@@ -18,7 +18,7 @@ function handleMultipleCommits(
 ) {
   const rebase = createCodeBlock(`git rebase HEAD~${commitLength} --signoff`);
   const push = createCodeBlock(`git push --force-with-lease origin ${ref}`);
-  return `You have ${numFailed} commits incorrectly signed off. To fix, first ensure you have a local copy of your branch by checking out the pull request locally via command line. Next, head to your local branch and run: \n${rebase}\n Now your commits will have your sign off. Next run \n${push}`;
+  return `You have ${numFailed} commits incorrectly signed off. To fix, first ensure you have a local copy of your branch by checking out the pull request locally via command line. Next, head to your local branch and run: \n${rebase}\nNow your commits will have your sign off. Next run \n${push}`;
 }
 
 function formatCommitInfo({

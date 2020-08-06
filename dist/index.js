@@ -2448,7 +2448,7 @@ function handleOneCommit(ref) {
 function handleMultipleCommits(ref, commitLength, numFailed) {
     const rebase = utils_1.createCodeBlock(`git rebase HEAD~${commitLength} --signoff`);
     const push = utils_1.createCodeBlock(`git push --force-with-lease origin ${ref}`);
-    return `You have ${numFailed} commits incorrectly signed off. To fix, first ensure you have a local copy of your branch by checking out the pull request locally via command line. Next, head to your local branch and run: \n${rebase}\n Now your commits will have your sign off. Next run \n${push}`;
+    return `You have ${numFailed} commits incorrectly signed off. To fix, first ensure you have a local copy of your branch by checking out the pull request locally via command line. Next, head to your local branch and run: \n${rebase}\nNow your commits will have your sign off. Next run \n${push}`;
 }
 function formatCommitInfo({ sha, url, message, committer, author, }) {
     return `Commit sha: [${sha}](${url}), Author: ${author}, Committer: ${committer}; ${message}`;
@@ -6908,7 +6908,7 @@ module.exports = require("http");
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createCodeBlock = void 0;
 function createCodeBlock(code) {
-    return `\n\n${code}\n\n`;
+    return `\n${code}\n`;
 }
 exports.createCodeBlock = createCodeBlock;
 
