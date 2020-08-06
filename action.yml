@@ -8,3 +8,8 @@ branding:
 runs:
   using: 'node12'
   main: 'dist/index.js'
+
+inputs:
+  github-token:
+    description: 'GitHub token'
+    required: true

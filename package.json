@@ -2,6 +2,7 @@
   "name": "dco",
   "version": "0.0.0",
   "description": "dco",
+  "main": "lib/main.js",
   "scripts": {
     "build": "tsc && ncc build",
     "format:js": "eslint --fix src/**/*.ts",
@@ -10,7 +11,9 @@
     "lint:non-js": "prettier --check \"./**/*.{md,yml,json}\"",
     "test": "jest --verbose --colors"
   },
-  "dependencies": {},
+  "dependencies": {
+    "email-validator": "^2.0.4"
+  },
   "devDependencies": {
     "@actions/core": "^1.2.0",
     "@actions/github": "^3.0.0",
